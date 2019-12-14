@@ -19,14 +19,14 @@ vectormath
     :alt: Code test coverage
 
 
-Vector math utilities for Python built on `NumPy <http://www.numpy.org/>`_
+Vector math utilities for Python built on `NumPy <https://numpy.org/>`_
 
 
 Why
 ---
 
 The :code:`vectormath` package provides a fast, simple library of vector math
-utilities by leveraging NumPy. This allows explicit
+utilities by leveraging NumPy_. This allows explicit
 geometric constructs to be created (for example, :code:`Vector3` and :code:`Plane`)
 without redefining the underlying array math.
 
@@ -40,7 +40,7 @@ The :code:`vectormath` package includes :code:`Vector3`/:code:`Vector2` and
 Goals
 -----
 
-* Speed: All low-level operations rely on NumPy arrays. These are densely packed,
+* Speed: All low-level operations rely on NumPy_ arrays. These are densely packed,
   typed, and partially implemented in C. The :code:`VectorArray` classes in particular
   take advantage of this speed by performing vector operations on all Vectors at
   once, rather than in a loop.
@@ -51,7 +51,7 @@ Goals
 Alternatives
 ------------
 
-* `NumPy <http://www.numpy.org/>`_ can be used for any array operations
+* NumPy_ can be used for any array operations
 * Many small libraries on PyPI (e.g. `vectors <https://github.com/allelos/vectors>`_)
   implement vector math operations but are are only built with single vectors
   in mind.

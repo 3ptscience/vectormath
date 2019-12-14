@@ -63,7 +63,7 @@ class BaseVector(np.ndarray):
     def theta(self):
         """Angular coordinate / azimuthal angle of this vector in radians
 
-        Based on polar coordinate space (or sperical coordinate space for `Vector3`)
+        Based on polar coordinate space (or spherical coordinate space for `Vector3`)
         returns angle between this vector and the positive x-axis
         range: (-pi <= theta <= pi)
         """
@@ -79,7 +79,7 @@ class BaseVector(np.ndarray):
     def theta_deg(self):
         """Angular coordinate / azimuthal angle of this vector in degrees
 
-        Based on polar coordinate space (or sperical coordinate space for `Vector3`)
+        Based on polar coordinate space (or spherical coordinate space for `Vector3`)
         returns angle between this vector and the positive x-axis
         range: (-180 <= theta_deg <= 180)
         """
@@ -100,7 +100,7 @@ class BaseVector(np.ndarray):
     def as_unit(self):
         """Return a new vector scaled to length 1"""
         new_vec = self.copy()
-        new_vec.normalize()
+        new_vec.normalize()                                                    # pylint: disable=no-member
         return new_vec
 
     def normalize(self):
@@ -108,7 +108,7 @@ class BaseVector(np.ndarray):
         self.length = 1
         return self
 
-    def dot(self, vec):
+    def dot(self, vec):                                                        # pylint: disable=arguments-differ
         """Dot product with another vector"""
         if not isinstance(vec, self.__class__):
             raise TypeError('Dot product operand must be a vector')
@@ -179,7 +179,8 @@ class Vector3(BaseVector):
 
         return read_array(x, y, z)
 
-    def __array_wrap__(self, out_arr, context=None):                           #pylint: disable=no-self-use, unused-argument
+    @staticmethod
+    def __array_wrap__(out_arr, context=None):                                 # pylint: disable=arguments-differ, unused-argument
         """This is called at the end of ufuncs
 
         If the output is the wrong shape, return the ndarray view
@@ -220,8 +221,8 @@ class Vector3(BaseVector):
     def phi(self):
         """Polar angle / inclination of this vector in radians
 
-        Based on sperical coordinate space
-        returns angle between this vector and the positive z-azis
+        Based on spherical coordinate space
+        returns angle between this vector and the positive z-axis
         range: (0 <= phi <= pi)
         """
         return np.arctan2(np.sqrt(self.x**2 + self.y**2), self.z)
@@ -236,8 +237,8 @@ class Vector3(BaseVector):
     def phi_deg(self):
         """Polar angle / inclination of this vector in degrees
 
-        Based on sperical coordinate space
-        returns angle between this vector and the positive z-azis
+        Based on spherical coordinate space
+        returns angle between this vector and the positive z-axis
         range: (0 <= phi <= pi)
         """
         return self.phi * 180 / np.pi
@@ -287,7 +288,8 @@ class Vector2(BaseVector):
 
         return read_array(x, y)
 
-    def __array_wrap__(self, out_arr, context=None):                           #pylint: disable=no-self-use, unused-argument
+    @staticmethod
+    def __array_wrap__(out_arr, context=None):                                 # pylint: disable=arguments-differ, unused-argument
         if out_arr.shape != (2,):
             out_arr = out_arr.view(np.ndarray)
         return out_arr
@@ -304,7 +306,7 @@ class Vector2(BaseVector):
         """Cross product with another vector"""
         if not isinstance(vec, self.__class__):
             raise TypeError('Cross product operand must be a vector')
-        return Vector3(0, 0, np.asscalar(np.cross(self, vec)))
+        return Vector3(0, 0, np.cross(self, vec).item(0))
 
 
 class BaseVectorArray(BaseVector):
@@ -385,7 +387,7 @@ class BaseVectorArray(BaseVector):
         if self.nV != 1 and vec.nV != 1 and self.nV != vec.nV:
             raise ValueError('Dot product operands must have the same '
                              'number of elements.')
-        return np.sum((getattr(self, d)*getattr(vec, d) for d in self.dims), 1)
+        return sum((getattr(self, d)*getattr(vec, d) for d in self.dims))
 
     def angle(self, vec, unit='rad'):
         """Angle method is only for Vectors, not VectorArrays"""
@@ -448,7 +450,8 @@ class Vector3Array(BaseVectorArray):
 
         return read_array(x, y, z)
 
-    def __array_wrap__(self, out_arr, context=None):                           #pylint: disable=no-self-use, unused-argument
+    @staticmethod
+    def __array_wrap__(out_arr, context=None):                                 # pylint: disable=arguments-differ, unused-argument
         if len(out_arr.shape) != 2 or out_arr.shape[1] != 3:
             out_arr = out_arr.view(np.ndarray)
         return out_arr
@@ -463,7 +466,7 @@ class Vector3Array(BaseVectorArray):
             )
 
     def __getitem__(self, i):
-        """Overriding _getitem__ allows coersion to Vector3 or ndarray"""
+        """Overriding __getitem__ allows coercion to Vector3 or ndarray"""
         item_out = super(Vector3Array, self).__getitem__(i)
         if np.isscalar(i):
             return item_out.view(Vector3)
@@ -548,7 +551,8 @@ class Vector2Array(BaseVectorArray):
 
         return read_array(x, y)
 
-    def __array_wrap__(self, out_arr, context=None):                           #pylint: disable=no-self-use, unused-argument
+    @staticmethod
+    def __array_wrap__(out_arr, context=None):                                 # pylint: disable=arguments-differ, unused-argument
         if len(out_arr.shape) != 2 or out_arr.shape[1] != 2:
             out_arr = out_arr.view(np.ndarray)
         return out_arr
